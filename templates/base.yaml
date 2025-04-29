@@ -1,0 +1,12 @@
+project_root:
+  pattern: "{root}/{project}"
+  defaults:
+    root: "/mnt/projects"
+
+sequence_root:
+  pattern: "{project_root}/sequences/{sequence}"
+  parent: project_root
+
+asset_root:
+  pattern: "{project_root}/assets/{asset_type}/{asset}"
+  parent: project_root

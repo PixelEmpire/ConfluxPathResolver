@@ -1,0 +1,93 @@
+# === Base Templates ===
+
+base:
+  pattern: "{root}/{project}"
+  defaults:
+    root: /mnt/projects
+  metadata:
+    type: base
+
+# === Asset Templates ===
+
+asset_base:
+  parent: base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}"
+  metadata:
+    type: asset
+
+asset_workfile:
+  parent: asset_base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}/work/{task}/{asset_name}_{task}_v{version}.{ext}"
+  defaults:
+    ext: ma
+    version: "001"
+  tags: ["workfile", "asset"]
+
+asset_publish:
+  parent: asset_base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}/publish/{task}/{asset_name}_{task}_v{version}.{ext}"
+  defaults:
+    ext: abc
+    version: "001"
+  tags: ["publish", "asset"]
+
+# === Sequence Templates ===
+
+sequence_base:
+  parent: base
+  pattern: "{root}/{project}/sequences/{sequence}"
+  metadata:
+    type: sequence
+
+# === Shot Templates ===
+
+shot_base:
+  parent: sequence_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}"
+  metadata:
+    type: shot
+
+shot_workfile:
+  parent: shot_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/work/{task}/{shot}_{task}_v{version}.{ext}"
+  defaults:
+    ext: nk
+    version: "001"
+  tags: ["workfile", "shot"]
+
+shot_publish:
+  parent: shot_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/publish/{task}/{shot}_{task}_v{version}.{ext}"
+  defaults:
+    ext: exr
+    version: "001"
+  tags: ["publish", "shot"]
+
+# === General Output ===
+
+review_mov:
+  parent: shot_publish
+  pattern: "{root}/{project}/review/{sequence}/{shot}/{shot}_{task}_v{version}.mov"
+  defaults:
+    ext: mov
+  tags: ["review", "shot", "output"]
+
+# === Render Output ===
+
+render_frames:
+  parent: shot_publish
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/render/{task}/{shot}_{task}_v{version}/{shot}.{frame}.{ext}"
+  defaults:
+    ext: exr
+    frame: "####"
+  tags: ["render", "output"]
+
+# === Utility Cache Outputs ===
+
+cache_publish:
+  parent: asset_publish
+  pattern: "{root}/{project}/cache/{asset_type}/{asset_name}/{task}/v{version}/{asset_name}_{task}.abc"
+  defaults:
+    ext: abc
+  tags: ["cache", "publish"]
+

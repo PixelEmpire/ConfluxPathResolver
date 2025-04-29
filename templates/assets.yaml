@@ -1,0 +1,20 @@
+asset_workfile:
+  pattern: "{asset_root}/work/{task}/{asset}_{task}_v{version}.{ext}"
+  parent: asset_root
+  defaults:
+    ext: ma
+    version: 001
+
+asset_publish:
+  pattern: "{asset_root}/publish/{task}/v{version}/{asset}_{task}_v{version}.{ext}"
+  parent: asset_root
+  defaults:
+    ext: usd
+    version: 001
+
+asset_preview:
+  pattern: "{asset_root}/preview/{asset}_preview_v{version}.{ext}"
+  parent: asset_root
+  defaults:
+    ext: mov
+    version: 001

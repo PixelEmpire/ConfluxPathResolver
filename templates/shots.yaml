@@ -1,0 +1,20 @@
+shot_workfile:
+  pattern: "{sequence_root}/{shot}/work/{task}/{shot}_{task}_v{version}.{ext}"
+  parent: sequence_root
+  defaults:
+    ext: nk
+    version: 001
+
+shot_publish:
+  pattern: "{sequence_root}/{shot}/publish/{task}/v{version}/{shot}_{task}_v{version}.{ext}"
+  parent: sequence_root
+  defaults:
+    ext: exr
+    version: 001
+
+shot_render:
+  pattern: "{sequence_root}/{shot}/renders/{task}/v{version}/{shot}_{task}_{frame:04}.{ext}"
+  parent: sequence_root
+  defaults:
+    ext: exr
+    version: 001

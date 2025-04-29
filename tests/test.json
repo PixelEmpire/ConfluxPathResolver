@@ -1,0 +1,8 @@
+{
+  "project": "test_project",
+  "asset_type": "character",
+  "asset_name": "hero",
+  "task": "modeling",
+  "version": "001",
+  "ext": "ma"
+}
