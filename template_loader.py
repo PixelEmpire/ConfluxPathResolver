@@ -9,13 +9,22 @@ from exceptions import InvalidTemplateError, TemplateNotFoundError
 
 class TemplateLoader:
     """
-        Loads templates from one or more YAML files, resolves inheritance,
-        and stores them by name.
+        A class to load and manage templates from YAML files. It supports resolving
+        inheritance between templates and provides access to templates by name.
 
-        :param template_files: List of YAML files to load templates from.
+        Attributes:
+            template_files (List[str]): List of YAML files to load templates from.
+            _templates (Dict[str, Template]): Dictionary of resolved templates by name.
+            _raw_data (Dict[str, dict]): Raw template data loaded from YAML files.
+            _loaded_files (set): Set of file paths that have already been loaded.
     """
 
     def __init__(self, template_files: Optional[List[str]] = None):
+        """
+           Initializes the TemplateLoader with a list of YAML files.
+
+            :param template_files: List of YAML file paths to load templates from.
+        """
         self.template_files = template_files or []
         self._templates: Dict[str, Template] = {}
         self._raw_data: Dict[str, dict] = {}
@@ -30,8 +39,11 @@ class TemplateLoader:
     def _load_from_file(self, file_path: str):
         """
             Loads a YAML file and adds its templates to the loader.
+
             :param file_path: Path to the YAML file.
-            :return: None
+
+            :raises TemplateNotFoundError: If the file does not exist.
+            :raises InvalidTemplateError: If a template in the file is missing a required "pattern".
         """
         file_path = os.path.abspath(file_path)  # Resolve to absolute path
 
@@ -57,8 +69,7 @@ class TemplateLoader:
 
     def _resolve_all_templates(self):
         """
-            Resolves all templates, including their inheritance.
-            :return: None
+            Resolves all templates, including their inheritance, and stores them in the `_templates` dictionary.
         """
         self._templates.clear()
         for name in self._raw_data:
@@ -67,9 +78,12 @@ class TemplateLoader:
     def _build_template(self, name: str, seen: Optional[List[str]] = None) -> Template:
         """
             Recursively builds a template, resolving inheritance.
-            :param name: str, name of the template to build
-            :param seen: list, names of templates already seen in this resolution path
-            :return: Template object
+
+            :param name : Name of the template to build.
+            :param seen : Names of templates already seen in this resolution path
+                                            (to detect circular inheritance).
+
+            :returns: Template: The resolved Template object.
         """
         if name in self._templates:
             return self._templates[name]
@@ -108,11 +122,29 @@ class TemplateLoader:
         )
 
     def get(self, name: str) -> Template:
+        """
+            Retrieves a resolved template by name.
+
+            Args:
+                name (str): Name of the template to retrieve.
+
+            Returns:
+                Template: The resolved Template object.
+
+            Raises:
+                TemplateNotFoundError: If the template is not found.
+        """
         if name not in self._templates:
             raise TemplateNotFoundError(f"Template '{name}' not found")
         return self._templates[name]
 
     def all(self) -> Dict[str, Template]:
+        """
+            Returns all loaded templates.
+
+            Returns:
+                Dict[str, Template]: Dictionary of all resolved templates by name.
+        """
         return self._templates
 
     def add_template_file(self, file_path: str):

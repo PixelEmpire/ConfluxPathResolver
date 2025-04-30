@@ -1,20 +1,21 @@
+asset_base:
+  parent: base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}"
+  metadata:
+    type: asset
+
 asset_workfile:
-  pattern: "{asset_root}/work/{task}/{asset}_{task}_v{version}.{ext}"
-  parent: asset_root
+  parent: asset_base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}/work/{task}/{asset_name}_{task}_v{version}.{ext}"
   defaults:
     ext: ma
-    version: 001
+    version: "001"
+  tags: ["workfile", "asset"]
 
 asset_publish:
-  pattern: "{asset_root}/publish/{task}/v{version}/{asset}_{task}_v{version}.{ext}"
-  parent: asset_root
+  parent: asset_base
+  pattern: "{root}/{project}/assets/{asset_type}/{asset_name}/publish/{task}/{asset_name}_{task}_v{version}.{ext}"
   defaults:
-    ext: usd
-    version: 001
-
-asset_preview:
-  pattern: "{asset_root}/preview/{asset}_preview_v{version}.{ext}"
-  parent: asset_root
-  defaults:
-    ext: mov
-    version: 001
+    ext: abc
+    version: "001"
+  tags: ["publish", "asset"]

@@ -1,20 +1,49 @@
+# === Sequence Templates ===
+
+sequence_base:
+  parent: base
+  pattern: "{root}/{project}/sequences/{sequence}"
+  metadata:
+    type: sequence
+
+# === Shot Templates ===
+
+shot_base:
+  parent: sequence_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}"
+  metadata:
+    type: shot
+
 shot_workfile:
-  pattern: "{sequence_root}/{shot}/work/{task}/{shot}_{task}_v{version}.{ext}"
-  parent: sequence_root
+  parent: shot_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/work/{task}/{shot}_{task}_v{version}.{ext}"
   defaults:
     ext: nk
-    version: 001
+    version: "001"
+  tags: ["workfile", "shot"]
 
 shot_publish:
-  pattern: "{sequence_root}/{shot}/publish/{task}/v{version}/{shot}_{task}_v{version}.{ext}"
-  parent: sequence_root
+  parent: shot_base
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/publish/{task}/{shot}_{task}_v{version}.{ext}"
   defaults:
     ext: exr
-    version: 001
+    version: "001"
+  tags: ["publish", "shot"]
 
-shot_render:
-  pattern: "{sequence_root}/{shot}/renders/{task}/v{version}/{shot}_{task}_{frame:04}.{ext}"
-  parent: sequence_root
+# === Review Templates ===
+review_mov:
+  parent: shot_publish
+  pattern: "{root}/{project}/review/{sequence}/{shot}/{shot}_{task}_v{version}.mov"
+  defaults:
+    ext: mov
+  tags: [ "review", "shot", "output" ]
+
+# === Render Output ===
+
+render_frames:
+  parent: shot_publish
+  pattern: "{root}/{project}/sequences/{sequence}/{shot}/render/{task}/{shot}_{task}_v{version}/{shot}_{task}_v{version}.{frame}.{ext}"
   defaults:
     ext: exr
-    version: 001
+    frame: "####"
+  tags: ["render", "output"]

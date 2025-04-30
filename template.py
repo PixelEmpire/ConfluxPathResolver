@@ -2,7 +2,7 @@
 
 from typing import Dict, Optional, List, Any
 from exceptions import InvalidTemplateError, ContextValidationError
-from utils import extract_tokens
+from resolver_utils import extract_tokens
 
 
 class Template:
@@ -20,14 +20,14 @@ class Template:
         tags: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ):
-        self.name = name
-        self.pattern = pattern
-        self.defaults = defaults or {}
-        self.root = root
-        self.parent = parent
-        self.tags = tags or []
-        self.metadata = metadata or {}
-        self.tokens = extract_tokens(pattern)
+        self.name = name # Template name
+        self.pattern = pattern # Template pattern string
+        self.defaults = defaults or {} # Default values for tokens
+        self.root = root # Root path for the template
+        self.parent = parent # Parent template name for inheritance
+        self.tags = tags or [] # Tags associated with the template
+        self.metadata = metadata or {} # Metadata dictionary for additional information
+        self.tokens = extract_tokens(pattern) # Extract tokens from the pattern
 
     def validate_context(self, context: Dict[str, Any]):
         """

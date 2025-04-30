@@ -28,6 +28,22 @@ class HookManager:
         else:
             raise ValueError(f"Invalid hook type '{phase}'")
 
+    def unregister(self, phase: str, name: str, func: Callable):
+        """
+        Unregister a hook function from the specified phase and name.
+        :param phase: "before" or "after"
+        :param name: The name of the hook
+        :param func: The function to unregister
+        """
+        if phase == "before":
+            if name in self._before_hooks:
+                self._before_hooks[name].remove(func)
+        elif phase == "after":
+            if name in self._after_hooks:
+                self._after_hooks[name].remove(func)
+        else:
+            raise ValueError(f"Invalid hook type '{phase}'")
+
     def run_before(self, name: str, data: Dict[str, Any]):
         """
             Run all before hooks registered under the given name.
@@ -73,3 +89,23 @@ class HookManager:
         module_path, func_name = dotted_path.rsplit(".", 1)
         module = importlib.import_module(module_path)
         return getattr(module, func_name)
+
+    def clear_hooks(self):
+        """
+        Clear all registered hooks.
+        """
+        self._before_hooks.clear()
+        self._after_hooks.clear()
+
+    def list_hooks(self):
+        """
+        List all registered hooks.
+        """
+        return {
+            "before": self._before_hooks,
+            "after": self._after_hooks
+        }
+
+# Example usage of a hook function
+def example_hook(data):
+    print(f"Before hook executed with data: {data}")

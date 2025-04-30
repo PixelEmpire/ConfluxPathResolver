@@ -19,6 +19,8 @@ class Context:
 
             :param key: The key to retrieve, using dot-notation for nested keys.
             :param default: The default value to return if the key does not exist.
+            :return: The value associated with the key, or the default value.
+
         """
         parts = key.split(".")
         val = self._data
@@ -49,7 +51,6 @@ class Context:
             Existing keys will be overwritten.
 
             :param other: A dictionary of key-value pairs to merge into the context.
-            :return: None
         """
         for k, v in other.items():
             self.set(k, v)

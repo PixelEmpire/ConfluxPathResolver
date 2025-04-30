@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 from template_loader import TemplateLoader
 from exceptions import ResolveError
-from utils import expand_env_vars, contains_wildcard, expand_wildcards
+from resolver_utils import expand_env_vars, contains_wildcard, expand_wildcards
 from hooks import HookManager
 
 
@@ -23,6 +23,15 @@ class PathResolver:
         strict: bool = True,
         auto_create_folders: bool = False,
     ):
+        """
+            Initializes the PathResolver with a TemplateLoader instance.
+
+            :param loader: An instance of TemplateLoader to load templates.
+            :param strict: If True, raises an error if the context is missing required keys.
+            :param auto_create_folders: If True, automatically creates folders for resolved paths.
+
+            raises: TypeError: If loader is not an instance of TemplateLoader.
+        """
         if loader:
             if not isinstance(loader, TemplateLoader):
                 raise TypeError("loader must be an instance of TemplateLoader")
@@ -79,7 +88,9 @@ class PathResolver:
 
             :param pattern: The raw pattern to resolve.
             :param context: A dictionary containing the context for the pattern.
-            :return: The resolved path as a string.
+            :return : The resolved path as a string.
+            :raises ResolveError: If a key in the pattern is missing in the context or if no matches
+                                are found for a wildcard path.
         """
         try:
             resolved_path = pattern.format(**context)

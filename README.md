@@ -1,29 +1,76 @@
 # ConfluxPathResolver
+![Build Status](https://img.shields.io/github/actions/workflow/status/PixelEmpire/ConfluxPathResolver/ci.yml?branch=main)
+![Coverage](https://img.shields.io/codecov/c/github/PixelEmpire/ConfluxPathResolver)
+![License](https://img.shields.io/github/license/PixelEmpire/ConfluxPathResolver)
+![Python Version](https://img.shields.io/pypi/pyversions/confluxpathresolver)
+![Contributors](https://img.shields.io/github/contributors/PixelEmpire/ConfluxPathResolver)
+![Last Commit](https://img.shields.io/github/last-commit/PixelEmpire/ConfluxPathResolver)
+![Commits per Month](https://img.shields.io/github/commit-activity/m/PixelEmpire/ConfluxPathResolver)
+![Release](https://img.shields.io/github/v/release/PixelEmpire/ConfluxPathResolver)
+![Pre-Release](https://img.shields.io/github/v/release/PixelEmpire/ConfluxPathResolver?include_prereleases)
 
-**ConfluxPathResolver** is a powerful, flexible path resolving library designed for production pipelines. 
-It uses YAML-based templates to resolve filesystem paths dynamically using tokenized context.
-It supports strict and lazy resolution, wildcard expansion, environment variable interpolation, 
-auto folder creation, and custom hooks for extensibility.
-It is designed to be used in production environments, particularly in VFX and animation studios, 
-where complex directory structures and file naming conventions are common.
+**ConfluxPathResolver** is a powerful and flexible path-resolving library designed for production pipelines.  
+It uses YAML-based templates to dynamically resolve filesystem paths using tokenized context.  
+
+### ✨Key Features:
+- **Strict and Lazy Resolution**: Choose between strict or partial context resolution.  
+- **Wildcard Expansion**: Supports glob-style wildcards in paths.  
+- **Environment Variable Interpolation**: Seamlessly integrates environment variables.  
+- **Auto Folder Creation**: Automatically creates directories as needed.  
+- **Custom Hooks for Extensibility**: Add before/after hooks for validation or modification. 
+- **Manual Resolution**: Resolve arbitrary patterns without templates.
+
+Built for production environments, particularly in VFX and animation, it handles complex directory structures and file naming conventions.  
+Its extensible design allows users to define custom templates and hooks, making it easy to integrate with existing systems.
+---
+## 📜 Table of Contents
+- [ConfluxPathResolver](#confluxpathresolver)
+  - [📜 Table of Contents](#-table-of-contents)
+  - [📁 Project Structure](#-project-structure)
+  - [🔧 What It Does](#-what-it-does)
+  - [🚀 Quick Start](#-quick-start)
+    - [1. Setup a Template YAML](#1-setup-a-template-yaml)
+    - [2. Load and Resolve](#2-load-and-resolve)
+  - [🪝 Hook System](#-hook-system)
+  - [🧩 Advanced](#-advanced)
+    - [Lazy Mode](#lazy-mode)
+    - [Wildcard Matching](#wildcard-matching)
+    - [Frame Padding Support](#frame-padding-support)
+    - [📂 Template Organization](#template-organization)
+    - [🛠️ CLI Example (Optional)](#cli-example-optional)
+  - [🧪 Testing](#testing)
+    - [Unit Tests](#unit-tests)
+    - [License](#license)
+    - [Contributing](#contributing)
 
 ---
 
 ## 📁 Project Structure
 
+```plaintext
 conflux_path_resolver/
 ├── __init__.py # Package initialization
+├── context.py # Context class for managing context data
 ├── resolver.py # Core path resolver logic 
 ├── template.py # Template class for pattern, defaults, and validation 
 ├── template_loader.py # Loads YAML-based templates from directories 
 ├── hooks.py # Hook manager for before/after resolution logic 
 ├── exceptions.py # Custom exception classes 
-├── utils.py # Token parsing, wildcard, env var expansion helpers 
+├── resolver_utils.py # Token parsing, wildcard, env var expansion helpers 
 ├── templates/ # YAML files defining path templates 
-│   └── shot_templates.yaml # Example path templates 
+│   ├── base.yaml # Base templates
+│   ├── assets.yaml # Example path templates
+│   └── shots.yaml # Example path templates 
 ├── examples/ 
-│   └── run_resolver.py # Sample CLI interface or direct usage 
+│   └── # Example usage scripts soon to be added
+├── tests/ # Unit tests for the resolver
+│   ├── test_resolver.py # Tests for resolver functionality
+│   └── test.json # Example test data
+├── .gitignore # Git ignore file
+├── LICENSE # License file
+├── CONTRIBUTING.md # Contribution guidelines
 └── README.md # You're here!
+```
 
 ---
 
@@ -33,7 +80,7 @@ ConfluxPathResolver resolves filesystem paths from templates using token-based c
 
 ```yaml
 shot_work_path:
-  pattern: "{project_root}/shots/{sequence}/{shot}/{task}/v{version:0>3}/{shot}_{task}.nk"
+  pattern: "{project_root}/{sequence}/{shot}/{task}/v{version:0>3}/{shot}_{task}.nk"
   defaults:
     version: 1
     task: comp
@@ -41,35 +88,15 @@ shot_work_path:
 This will resolve to something like:
 
 ```
-/mnt/projects/dragonfire/shots/SQ001/SH010/comp/v004/SH010_comp.nk
+/mnt/projects/dragonfire/SQ001/SH010/comp/v004/SH010_comp.nk
 ```
-
-# ✨ Features
-
-### -✅ Tokenized path resolution
-
-### 🧠 Default values
-
-### 🛡️ Strict vs Lazy mode
-
-### 🌐 Environment variable expansion
-
-### 🔁 Wildcard support
-
-### 📂 Auto-create directories
-
-### 🪝 Before/After Hook system (hooks.py or inline via resolver)
-
-### 🔍 Manual resolve_from_dict() support
-
-
 
 ## 🚀 Quick Start
 ### 1. Setup a Template YAML
 ### templates/shot_templates.yaml
 ```yaml
 shot_output:
-  pattern: "{project_root}/shots/{sequence}/{shot}/output/v{version:0>3}/{shot}_{task}.{ext}"
+  pattern: "{project_root}/{sequence}/{shot}/output/v{version:0>3}/{shot}_{task}.{ext}"
   defaults:
     task: comp
     ext: nk
@@ -174,3 +201,13 @@ Unit tests can be written for:
 
 * Wildcard resolution
 
+### License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+### Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+We appreciate any feedback, bug reports, or feature requests.
+
+Please follow the [Contributing Guidelines](CONTRIBUTING.md) for more details on how to contribute to this project.
+
+For any issues or feature requests, please open an issue in the repository.
