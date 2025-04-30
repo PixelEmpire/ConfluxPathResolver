@@ -51,7 +51,8 @@ Its extensible design allows users to define custom templates and hooks, making 
 conflux_path_resolver/
 ├── __init__.py # Package initialization
 ├── context.py # Context class for managing context data
-├── resolver.py # Core path resolver logic 
+├── resolver.py # Core path resolver logic
+├── path_resolver.py # CLI interface for resolving paths
 ├── template.py # Template class for pattern, defaults, and validation 
 ├── template_loader.py # Loads YAML-based templates from directories 
 ├── hooks.py # Hook manager for before/after resolution logic 
