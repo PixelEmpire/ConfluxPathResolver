@@ -1,3 +1,6 @@
+
+![confluxpathresolver](Conflux_Path_Resolver_Logo.png)
+
 # ConfluxPathResolver
 ![Build Status](https://img.shields.io/github/actions/workflow/status/PixelEmpire/ConfluxPathResolver/ci.yml?branch=main)
 ![Coverage](https://img.shields.io/codecov/c/github/PixelEmpire/ConfluxPathResolver)

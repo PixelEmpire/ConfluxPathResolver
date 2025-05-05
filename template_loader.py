@@ -2,6 +2,7 @@
 
 import os
 import yaml
+import logging
 from typing import Dict, List, Optional
 from template import Template
 from exceptions import InvalidTemplateError, TemplateNotFoundError
@@ -19,7 +20,7 @@ class TemplateLoader:
             _loaded_files (set): Set of file paths that have already been loaded.
     """
 
-    def __init__(self, template_files: Optional[List[str]] = None):
+    def __init__(self, template_files: Optional[List[str]] = None, logger: logging.Logger = None):
         """
            Initializes the TemplateLoader with a list of YAML files.
 
@@ -30,11 +31,28 @@ class TemplateLoader:
         self._raw_data: Dict[str, dict] = {}
         self._loaded_files = set()
 
+        # Use the provided logger or create a default one
+        self.logger = logger or self._create_default_logger()
+
         for file in self.template_files:
-            print(f"TemplateLoader: Loading template file: {file}")
+            self.logger.debug(f"TemplateLoader: Loading template file: {file}")
             self._load_from_file(file)
 
         self._resolve_all_templates()
+
+    def _create_default_logger(self) -> logging.Logger:
+        """
+            Creates a default logger for the TemplateLoader.
+        """
+        logger = logging.getLogger("TemplateLoader")
+        logger.setLevel(logging.DEBUG)
+
+        if not logger.hasHandlers():
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+            logger.addHandler(handler)
+
+        return logger
 
     def _load_from_file(self, file_path: str):
         """
@@ -49,13 +67,13 @@ class TemplateLoader:
 
         # Skip if the file has already been loaded
         if file_path in self._loaded_files:
-            print(f"Skipping already loaded file: {file_path}")
+            self.logger.debug(f"Skipping already loaded file: {file_path}")
             return
 
-        print(f"Loading template file: {file_path}")
         if not os.path.isfile(file_path):
             raise TemplateNotFoundError(f"Template file not found: {file_path}")
 
+        self.logger.debug(f"Loading template file: {file_path}")
         with open(file_path, "r") as f:
             data = yaml.safe_load(f) or {}
 

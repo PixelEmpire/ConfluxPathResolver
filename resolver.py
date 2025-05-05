@@ -1,4 +1,6 @@
 import os
+import logging
+
 from typing import Dict, Any
 from template_loader import TemplateLoader
 from exceptions import ResolveError
@@ -22,6 +24,7 @@ class PathResolver:
         loader: TemplateLoader,
         strict: bool = True,
         auto_create_folders: bool = False,
+        logger: logging.Logger = None,
     ):
         """
             Initializes the PathResolver with a TemplateLoader instance.
@@ -29,20 +32,38 @@ class PathResolver:
             :param loader: An instance of TemplateLoader to load templates.
             :param strict: If True, raises an error if the context is missing required keys.
             :param auto_create_folders: If True, automatically creates folders for resolved paths.
+            :param logger: An optional external logger. If not provided, a default logger is created.
 
             raises: TypeError: If loader is not an instance of TemplateLoader.
         """
+        # Use the provided logger or create a default one
+        self.logger = logger or self._create_default_logger()
+
         if loader:
             if not isinstance(loader, TemplateLoader):
                 raise TypeError("loader must be an instance of TemplateLoader")
 
         else:
-            loader = TemplateLoader()
+            loader = TemplateLoader(logger=self.logger)
 
         self.loader = loader
         self.hooks = HookManager()
         self.strict = strict
         self.auto_create_folders = auto_create_folders
+
+    def _create_default_logger(self) -> logging.Logger:
+        """
+            Creates a default logger for the PathResolver.
+        """
+        logger = logging.getLogger("PathResolver")
+        logger.setLevel(logging.DEBUG)
+
+        if not logger.hasHandlers():
+            handler = logging.StreamHandler()
+            handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+            logger.addHandler(handler)
+
+        return logger
 
     def resolve(self, template_name: str, context: Dict[str, Any]) -> str:
         """
@@ -52,6 +73,7 @@ class PathResolver:
             :param context: A dictionary containing the context for the template.
             :return: The resolved path as a string.
         """
+        self.logger.debug(f"Resolving template '{template_name}' with context: {context}")
         template = self.loader.get(template_name)
         full_context = template.apply_defaults(context)
 
@@ -74,11 +96,19 @@ class PathResolver:
                 raise ResolveError(f"No matches found for wildcard path: {resolved_path}")
             resolved_path = matches[0]
 
+        # Prepend the root if it exists
+        if template.root:
+            resolved_path = os.path.join(template.root, resolved_path)
+
+        # Create the directory if it doesn't exist
         if self.auto_create_folders:
             os.makedirs(os.path.dirname(resolved_path), exist_ok=True)
+            self.logger.info(f"Created directories for path: {os.path.dirname(resolved_path)}")
 
         # HOOKS — AFTER RESOLVE
         self.hooks.run_after("resolve", resolved_path, full_context)
+
+        self.logger.info(f"Resolved path: {resolved_path}")
 
         return resolved_path
 

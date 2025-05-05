@@ -64,7 +64,17 @@ def common_context():
         "version": "001",
         "frame": "1001",
         "ext": "exr"
-    }, "Z:/projects/dragonfire/sequences/SQ002/SH020/render/lighting/SH020_lighting_v001/SH020_lighting_v001.1001.exr")
+    }, "Z:/projects/dragonfire/sequences/SQ002/SH020/render/lighting/SH020_lighting_v001/SH020_lighting_v001.1001.exr"),
+    ("render_frames", {
+        "root": "Z:/projects",
+        "project": "dragonfire",
+        "sequence": "SQ001",
+        "shot": "SH010",
+        "task": "comp",
+        "version": "004",
+        "ext": "exr"
+    }, "Z:/projects/dragonfire/sequences/SQ001/SH010/render/comp/SH010_comp_v004.####.exr")
+
 ])
 
 def test_path_resolver(resolver, template_name, context, expected):
@@ -97,4 +107,17 @@ def test_full_path_resolves(resolver):
         "ext": "nk"
     })
     expected_path = "Z:/projects/dragonfire/sequences/SQ001/SH010/work/comp/SH010_comp_v004.nk"
+    assert path == expected_path
+
+def test_image_sequence_resolves(resolver):
+    path = resolver.resolve(template_name="render_frames", context={
+        "root": "Z:/projects",
+        "project": "dragonfire",
+        "sequence": "SQ001",
+        "shot": "SH010",
+        "task": "comp",
+        "version": "004",
+        "ext": "exr"
+    })
+    expected_path = "Z:/projects/dragonfire/sequences/SQ001/SH010/render/comp/SH010_comp_v004/SH010_comp_v004.####.exr"
     assert path == expected_path
